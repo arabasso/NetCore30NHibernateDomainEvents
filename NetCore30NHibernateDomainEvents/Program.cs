@@ -16,13 +16,6 @@ namespace NetCore30NHibernateDomainEvents
         static async Task Main(
             string[] args)
         {
-            var modelMapper = new ModelMapper();
-
-            modelMapper.AddMapping<UserMapping>();
-            modelMapper.AddMapping<GroupMapping>();
-
-            var services = new ServiceCollection();
-
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             if (!string.IsNullOrEmpty(environment))
@@ -50,6 +43,8 @@ namespace NetCore30NHibernateDomainEvents
             }
 
             var configuration = builder.Build();
+
+            var services = new ServiceCollection();
 
             services.AddSingleton<IConfiguration>(c => configuration);
             services.AddDataDomain(configuration.GetConnectionString("DefaultConnection"));

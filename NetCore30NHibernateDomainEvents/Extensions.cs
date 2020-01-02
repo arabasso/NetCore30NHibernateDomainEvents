@@ -38,9 +38,9 @@ namespace NetCore30NHibernateDomainEvents
             this IServiceProvider serviceProvider,
             Type serviceType)
         {
-            var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(serviceType);
+            var enumerable = typeof(IEnumerable<>).MakeGenericType(serviceType);
 
-            return (IEnumerable<object>)serviceProvider.GetService(genericEnumerable);
+            return (IEnumerable<object>)serviceProvider.GetService(enumerable);
         }
 
         public static ServiceCollection AddDataDomain(
@@ -53,13 +53,13 @@ namespace NetCore30NHibernateDomainEvents
             services.AddSingleton(c =>
             {
                 var cfg = new Configuration()
-                    .UseMysql(connectionString)
                     .AddMapping()
-                    .AddDomainEventListener();
+                    .AddDomainEventListener()
+                    .UseMysql(connectionString);
 
                 if (create)
                 {
-                    cfg.DataBaseIntegration(db => { db.SchemaAction = SchemaAutoAction.Create; });
+                    cfg.DataBaseIntegration(db => db.SchemaAction = SchemaAutoAction.Create);
                 }
 
                 return cfg;
