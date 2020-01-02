@@ -17,11 +17,7 @@ namespace NetCore30NHibernateDomainEvents
             PostDeleteEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = @event.DeletedState
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.DeletedState, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(AfterDeletedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -29,11 +25,7 @@ namespace NetCore30NHibernateDomainEvents
         public void OnPostDelete(
             PostDeleteEvent @event)
         {
-            var properties = @event.DeletedState
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.DeletedState, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(AfterDeletedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -42,11 +34,7 @@ namespace NetCore30NHibernateDomainEvents
             PostInsertEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = @event.State
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.State, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(AfterAddedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -54,11 +42,7 @@ namespace NetCore30NHibernateDomainEvents
         public void OnPostInsert(
             PostInsertEvent @event)
         {
-            var properties = @event.State
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.State, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(AfterAddedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -67,20 +51,7 @@ namespace NetCore30NHibernateDomainEvents
             PostUpdateEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = new List<PropertyEntry>();
-
-            for (var i = 0; i < @event.State.Length; i++)
-            {
-                var property = @event.Persister.PropertyTypes[i];
-
-                var isModified = property.IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
-
-                var propertyName = @event.Persister.PropertyNames[i];
-
-                var propertyEntry = new NHibernatePropertyEntry(propertyName, isModified, @event.OldState, @event.State, i);
-
-                properties.Add(propertyEntry);
-            }
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(AfterModifiedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -88,20 +59,7 @@ namespace NetCore30NHibernateDomainEvents
         public void OnPostUpdate(
             PostUpdateEvent @event)
         {
-            var properties = new List<PropertyEntry>();
-
-            for (var i = 0; i < @event.State.Length; i++)
-            {
-                var property = @event.Persister.PropertyTypes[i];
-
-                var isModified = property.IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
-
-                var propertyName = @event.Persister.PropertyNames[i];
-
-                var propertyEntry = new NHibernatePropertyEntry(propertyName, isModified, @event.OldState, @event.State, i);
-
-                properties.Add(propertyEntry);
-            }
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(AfterModifiedEntityDomainEvent<>), @event.Entity, properties);
         }
@@ -110,11 +68,7 @@ namespace NetCore30NHibernateDomainEvents
             PreDeleteEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = @event.DeletedState
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.DeletedState, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(BeforeDeletedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -124,10 +78,7 @@ namespace NetCore30NHibernateDomainEvents
         public bool OnPreDelete(
             PreDeleteEvent @event)
         {
-            var properties = @event.DeletedState
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.DeletedState, i))
-                .Cast<PropertyEntry>().ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(BeforeDeletedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -138,11 +89,7 @@ namespace NetCore30NHibernateDomainEvents
             PreInsertEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = @event.State
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.State, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(BeforeAddedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -152,11 +99,7 @@ namespace NetCore30NHibernateDomainEvents
         public bool OnPreInsert(
             PreInsertEvent @event)
         {
-            var properties = @event.State
-                .Select((t, i) => @event.Persister.PropertyNames[i])
-                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.State, i))
-                .Cast<PropertyEntry>()
-                .ToList();
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(BeforeAddedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -167,20 +110,7 @@ namespace NetCore30NHibernateDomainEvents
             PreUpdateEvent @event,
             CancellationToken cancellationToken)
         {
-            var properties = new List<PropertyEntry>();
-
-            for (var i = 0; i < @event.State.Length; i++)
-            {
-                var property = @event.Persister.PropertyTypes[i];
-
-                var isModified = property.IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
-
-                var propertyName = @event.Persister.PropertyNames[i];
-
-                var propertyEntry = new NHibernatePropertyEntry(propertyName, isModified, @event.OldState, @event.State, i);
-
-                properties.Add(propertyEntry);
-            }
+            var properties = @event.ToPropertyEntry().ToList();
 
             await RaiseAsync(@event, typeof(BeforeModifiedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -190,20 +120,7 @@ namespace NetCore30NHibernateDomainEvents
         public bool OnPreUpdate(
             PreUpdateEvent @event)
         {
-            var properties = new List<PropertyEntry>();
-
-            for (var i = 0; i < @event.State.Length; i++)
-            {
-                var property = @event.Persister.PropertyTypes[i];
-
-                var isModified = property.IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
-
-                var propertyName = @event.Persister.PropertyNames[i];
-
-                var propertyEntry = new NHibernatePropertyEntry(propertyName, isModified, @event.OldState, @event.State, i);
-
-                properties.Add(propertyEntry);
-            }
+            var properties = @event.ToPropertyEntry().ToList();
 
             Raise(@event, typeof(BeforeModifiedEntityDomainEvent<>), @event.Entity, properties);
 
@@ -221,10 +138,8 @@ namespace NetCore30NHibernateDomainEvents
 
             var entityType = NHibernateUtil.GetClass(entity);
 
-            foreach (var t in entityType.GetInterfaces().ReverseConcat(entityType))
+            foreach (var domainEvent in entityType.GetInterfaces().ReverseConcat(entityType).Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties)))
             {
-                var domainEvent = Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties);
-
                 domainService.Raise(domainEvent);
             }
         }
@@ -240,10 +155,8 @@ namespace NetCore30NHibernateDomainEvents
 
             var entityType = NHibernateUtil.GetClass(entity);
 
-            foreach (var t in entityType.GetInterfaces().ReverseConcat(entityType))
+            foreach (var domainEvent in entityType.GetInterfaces().ReverseConcat(entityType).Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties)))
             {
-                var domainEvent = Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties);
-
                 await domainService.RaiseAsync(domainEvent);
             }
         }

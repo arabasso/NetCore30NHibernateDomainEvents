@@ -7,6 +7,7 @@ using NetCore30NHibernateDomainEvents.Events.Handles;
 using NetCore30NHibernateDomainEvents.Models;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.Engine;
 using NHibernate.Event;
 using NHibernate.Mapping.ByCode;
 
@@ -132,6 +133,64 @@ namespace NetCore30NHibernateDomainEvents
             });
 
             return configuration;
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PostInsertEvent @event)
+        {
+            return @event.State
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((name, i) => new NHibernatePropertyEntry(name, false, null, @event.State, i));
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PostUpdateEvent @event)
+        {
+            return @event.State
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((name, i) =>
+                {
+                    var isModified = @event.Persister.PropertyTypes[i].IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
+
+                    return new NHibernatePropertyEntry(name, isModified, @event.OldState, @event.State, i);
+                });
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PostDeleteEvent @event)
+        {
+            return @event.DeletedState
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((propertyName, i) => new NHibernatePropertyEntry(propertyName, false, null, @event.DeletedState, i));
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PreDeleteEvent @event)
+        {
+            return @event.DeletedState
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((name, i) => new NHibernatePropertyEntry(name, false, null, @event.DeletedState, i));
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PreInsertEvent @event)
+        {
+            return @event.State
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((name, i) => new NHibernatePropertyEntry(name, false, null, @event.State, i));
+        }
+
+        public static IEnumerable<PropertyEntry> ToPropertyEntry(
+            this PreUpdateEvent @event)
+        {
+            return @event.State
+                .Select((t, i) => @event.Persister.PropertyNames[i])
+                .Select((name, i) =>
+                {
+                    var isModified = @event.Persister.PropertyTypes[i].IsModified(@event.OldState[i], @event.State[i], new[] { false }, @event.Session);
+
+                    return new NHibernatePropertyEntry(name, isModified, @event.OldState, @event.State, i);
+                });
         }
     }
 }
