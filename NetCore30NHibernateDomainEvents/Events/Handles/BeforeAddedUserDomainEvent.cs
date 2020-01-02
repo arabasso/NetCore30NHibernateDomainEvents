@@ -10,9 +10,7 @@ namespace NetCore30NHibernateDomainEvents.Events.Handles
         public void Handle(
             BeforeAddedEntityDomainEvent<User> args)
         {
-            var p = args.Property("Active");
-
-            p.CurrentValue = args.Entity.Active = true;
+            HandleAsync(args).Wait();
         }
 
         public async Task HandleAsync(BeforeAddedEntityDomainEvent<User> args)
