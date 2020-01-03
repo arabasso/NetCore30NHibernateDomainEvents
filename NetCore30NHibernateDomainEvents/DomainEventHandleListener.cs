@@ -136,9 +136,7 @@ namespace NetCore30NHibernateDomainEvents
             var domainService = @event.GetServiceProvider()
                 .GetService<DomainEventHandleService>();
 
-            var entityType = NHibernateUtil.GetClass(entity);
-
-            foreach (var domainEvent in entityType.GetInterfaces().ReverseConcat(entityType).Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties)))
+            foreach (var domainEvent in GetDomainEvents(type, entity, properties))
             {
                 domainService.Raise(domainEvent);
             }
@@ -153,12 +151,25 @@ namespace NetCore30NHibernateDomainEvents
             var domainService = @event.GetServiceProvider()
                 .GetService<DomainEventHandleService>();
 
-            var entityType = NHibernateUtil.GetClass(entity);
-
-            foreach (var domainEvent in entityType.GetInterfaces().ReverseConcat(entityType).Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties)))
+            foreach (var domainEvent in GetDomainEvents(type, entity, properties))
             {
                 await domainService.RaiseAsync(domainEvent);
             }
+        }
+
+        private IEnumerable<object> GetDomainEvents(Type type, object entity, IEnumerable<PropertyEntry> properties)
+        {
+            var entityType = NHibernateUtil.GetClass(entity);
+
+            return SelfAndInterfaces(entityType.GetInterfaces(), entityType)
+                .Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties));
+        }
+
+        private IEnumerable<Type> SelfAndInterfaces(
+            IEnumerable<Type> interfaces,
+            params Type[] type)
+        {
+            return type.Concat(interfaces);
         }
     }
 }
