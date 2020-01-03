@@ -129,14 +129,14 @@ namespace NetCore30NHibernateDomainEvents
 
         private void Raise(
             AbstractEvent @event,
-            Type type,
+            Type eventType,
             object entity,
             IEnumerable<PropertyEntry> properties)
         {
             var domainService = @event.GetServiceProvider()
                 .GetService<DomainEventHandleService>();
 
-            foreach (var domainEvent in GetDomainEvents(type, entity, properties))
+            foreach (var domainEvent in GetDomainEvents(eventType, entity, properties))
             {
                 domainService.Raise(domainEvent);
             }
@@ -144,25 +144,28 @@ namespace NetCore30NHibernateDomainEvents
 
         private async Task RaiseAsync(
             AbstractEvent @event,
-            Type type,
+            Type eventType,
             object entity,
             IEnumerable<PropertyEntry> properties)
         {
             var domainService = @event.GetServiceProvider()
                 .GetService<DomainEventHandleService>();
 
-            foreach (var domainEvent in GetDomainEvents(type, entity, properties))
+            foreach (var domainEvent in GetDomainEvents(eventType, entity, properties))
             {
                 await domainService.RaiseAsync(domainEvent);
             }
         }
 
-        private IEnumerable<object> GetDomainEvents(Type type, object entity, IEnumerable<PropertyEntry> properties)
+        private IEnumerable<object> GetDomainEvents(
+            Type eventType,
+            object entity,
+            IEnumerable<PropertyEntry> properties)
         {
             var entityType = NHibernateUtil.GetClass(entity);
 
             return SelfAndInterfaces(entityType.GetInterfaces(), entityType)
-                .Select(t => Activator.CreateInstance(type.MakeGenericType(t), entity, entityType, properties));
+                .Select(t => Activator.CreateInstance(eventType.MakeGenericType(t), entity, entityType, properties));
         }
 
         private IEnumerable<Type> SelfAndInterfaces(

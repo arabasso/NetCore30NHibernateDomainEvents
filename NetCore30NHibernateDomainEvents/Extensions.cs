@@ -85,10 +85,15 @@ namespace NetCore30NHibernateDomainEvents
             return services;
         }
 
-        public static IEnumerable<T> ReverseConcat<T>(
-            this IEnumerable<T> source, params T[] items)
+        public static Configuration AddListener<T>(
+            this Configuration configuration,
+            ListenerType type,
+            T listener)
+            where T : class
         {
-            return items.Concat(source);
+            configuration.AppendListeners(type, new [] { listener });
+
+            return configuration;
         }
 
         public static Configuration AddDomainEventListener(
@@ -96,12 +101,12 @@ namespace NetCore30NHibernateDomainEvents
         {
             var listener = new DomainEventHandleListener();
 
-            configuration.SetListener(ListenerType.PreInsert, listener);
-            configuration.SetListener(ListenerType.PostInsert, listener);
-            configuration.SetListener(ListenerType.PreUpdate, listener);
-            configuration.SetListener(ListenerType.PostUpdate, listener);
-            configuration.SetListener(ListenerType.PreDelete, listener);
-            configuration.SetListener(ListenerType.PostDelete, listener);
+            configuration.AddListener<IPreInsertEventListener>(ListenerType.PreInsert, listener);
+            configuration.AddListener<IPostInsertEventListener>(ListenerType.PostInsert, listener);
+            configuration.AddListener<IPreUpdateEventListener>(ListenerType.PreUpdate, listener);
+            configuration.AddListener<IPostUpdateEventListener>(ListenerType.PostUpdate, listener);
+            configuration.AddListener<IPreDeleteEventListener>(ListenerType.PreDelete, listener);
+            configuration.AddListener<IPostDeleteEventListener>(ListenerType.PostDelete, listener);
 
             return configuration;
         }
