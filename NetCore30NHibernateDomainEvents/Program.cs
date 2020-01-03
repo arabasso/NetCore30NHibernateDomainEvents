@@ -58,7 +58,10 @@ namespace NetCore30NHibernateDomainEvents
 
             try
             {
-                var user = new User("Raphael Basso", "arabasso", new Group("Users"));
+                var user = new User("Raphael Basso", "arabasso", new Group("Users"))
+                {
+                    Email = "arabasso@yahoo.com.br"
+                };
 
                 await session.SaveAsync(user);
 

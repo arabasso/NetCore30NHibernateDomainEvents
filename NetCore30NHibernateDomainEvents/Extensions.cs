@@ -80,6 +80,16 @@ namespace NetCore30NHibernateDomainEvents
             services.AddTransient<IDomainEventHandle<BeforeAddedEntityDomainEvent<User>>, BeforeAddedUserModelDomainEventHandle>();
             services.AddTransient<IDomainEventHandleAsync<BeforeAddedEntityDomainEvent<User>>, BeforeAddedUserModelDomainEventHandle>();
 
+            services.AddTransient<IDomainEventHandle<AfterAddedEntityDomainEvent<User>>, SendMailAfterAddedUserDomainEventHandle>();
+            services.AddTransient<IDomainEventHandleAsync<AfterAddedEntityDomainEvent<User>>, SendMailAfterAddedUserDomainEventHandle>();
+
+            services.AddTransient<IDomainEventHandle<AfterAddedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+            services.AddTransient<IDomainEventHandleAsync<AfterAddedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+            services.AddTransient<IDomainEventHandle<AfterModifiedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+            services.AddTransient<IDomainEventHandleAsync<AfterModifiedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+            services.AddTransient<IDomainEventHandle<AfterDeletedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+            services.AddTransient<IDomainEventHandleAsync<AfterDeletedEntityDomainEvent<IAudit>>, AuditDomainEventHandle>();
+
             return services;
         }
 

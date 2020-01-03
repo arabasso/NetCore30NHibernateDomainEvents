@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace NetCore30NHibernateDomainEvents.Models
 {
     public class Group
-        : IEntity
+        : IAudit
     {
         public virtual long Id { get; set; }
         public virtual string Name { get; set; }

@@ -1,7 +1,7 @@
 ﻿namespace NetCore30NHibernateDomainEvents.Models
 {
     public class User
-        : IEntity
+        : IAudit
     {
         public virtual long Id { get; set; }
         public virtual string Name { get; set; }
