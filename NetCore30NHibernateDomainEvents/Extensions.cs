@@ -101,12 +101,12 @@ namespace NetCore30NHibernateDomainEvents
         {
             var listener = new DomainEventHandleListener();
 
-            configuration.AddListener<IPreInsertEventListener>(ListenerType.PreInsert, listener);
-            configuration.AddListener<IPostInsertEventListener>(ListenerType.PostInsert, listener);
-            configuration.AddListener<IPreUpdateEventListener>(ListenerType.PreUpdate, listener);
-            configuration.AddListener<IPostUpdateEventListener>(ListenerType.PostUpdate, listener);
-            configuration.AddListener<IPreDeleteEventListener>(ListenerType.PreDelete, listener);
-            configuration.AddListener<IPostDeleteEventListener>(ListenerType.PostDelete, listener);
+            configuration.AddListener<IPreInsertEventListener>(ListenerType.PreInsert, listener)
+                .AddListener<IPostInsertEventListener>(ListenerType.PostInsert, listener)
+                .AddListener<IPreUpdateEventListener>(ListenerType.PreUpdate, listener)
+                .AddListener<IPostUpdateEventListener>(ListenerType.PostUpdate, listener)
+                .AddListener<IPreDeleteEventListener>(ListenerType.PreDelete, listener)
+                .AddListener<IPostDeleteEventListener>(ListenerType.PostDelete, listener);
 
             return configuration;
         }
