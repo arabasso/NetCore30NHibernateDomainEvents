@@ -49,8 +49,6 @@ namespace NetCore30NHibernateDomainEvents
             string connectionString,
             bool create = true)
         {
-            services.AddScoped<ServiceProviderInterceptor>();
-
             services.AddSingleton(c =>
             {
                 var cfg = new Configuration()

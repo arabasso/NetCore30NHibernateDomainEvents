@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetCore30NHibernateDomainEvents.Models;
-using NetCore30NHibernateDomainEvents.Models.Mappings;
 using NHibernate;
-using NHibernate.Mapping.ByCode;
 
 namespace NetCore30NHibernateDomainEvents
 {
